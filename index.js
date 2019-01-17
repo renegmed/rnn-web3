@@ -1,5 +1,31 @@
-import { AppRegistry } from 'react-native';
+//import { AppRegistry } from 'react-native';
 import './global'
-import App from './App';
+//import App from './App';
+import {Navigation} from 'react-native-navigation';
+import {registerScreens} from './src/screens';
 
-AppRegistry.registerComponent('RNW3Boilerplate', () => App);
+registerScreens();
+
+Navigation.events().registerAppLaunchedListener(() => {
+  Navigation.setRoot({
+    root: {
+      stack: {
+        children: [
+          {
+            component: {
+              name: 'MainPage'
+            }
+          }
+        ],
+        options: {
+          topBar: {
+            title: {
+              text: 'Welcome To Kickstart'
+            }
+          }
+        }
+      }
+    }
+  });
+});
+
