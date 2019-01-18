@@ -1,6 +1,4 @@
-//import { AppRegistry } from 'react-native';
-import './global'
-//import App from './App';
+import './global' 
 import {Navigation} from 'react-native-navigation';
 import {registerScreens} from './src/screens';
 

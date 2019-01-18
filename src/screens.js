@@ -1,6 +1,10 @@
 import {Navigation} from 'react-native-navigation'; 
-export function registerScreens() { 
 
-  Navigation.registerComponent('MainPage', () => require('./Main').default); 
+import { Provider } from 'react-redux';
 
+import { store } from './store';
+
+export function registerScreens() {   
+  Navigation.registerComponentWithRedux(
+      'MainPage', () => require('./Main').default, Provider, store);
 }
