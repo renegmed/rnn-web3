@@ -1,129 +1,187 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ * @flow
+ */
 
-//import './global';
+import React, {Component} from 'react';
+import {Platform} from 'react-native';
+import {
+  StyleSheet,
+  Button,
+  Text,
+  View,
+  Linking
+} from 'react-native';
+import { DeviceEventEmitter } from 'react-native';
 
-const Web3 = require('web3');
+import RNBlockstackSdk from 'react-native-blockstack';
+const textFileName = "message.txt"
 
-const web3 = new Web3(
-  new Web3.providers.HttpProvider('https://mainnet.infura.io/'),
-);
+type Props = {};
+export default class App extends Component<Props> {
 
-export default class App extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      latestBlock: {},
+      constructor(props) {
+          super(props);
+          this.state = {
+              loaded: false,
+              userData: null,
+              fileContents: null,
+              fileUrl: null
+          };
+        }
+
+      componentDidMount() {
+          console.log("didMount")
+          console.log("props" + JSON.stringify(this.props))
+          this.createSession()
+
+          var app = this
+          var pendingAuth = false
+          DeviceEventEmitter.addListener('url', function(e: Event) {
+                      console.log("deep link " + pendingAuth)
+                      if (e.url && !pendingAuth) {
+                         pendingAuth = true
+                         var parts = e.url.split(":")
+                         if (parts.length > 1 ) {
+                         console.log("deep link " + parts[1])
+                         RNBlockstackSdk.handlePendingSignIn(parts[1])
+                           .then(function(result) {
+                                  console.log("handleAuthResponse " + JSON.stringify(result))
+                                  app.setState({userData:{decentralizedID:result["decentralizedID"]}, loaded:result["loaded"]})
+                                  pendingAuth = false
+                              },
+                              function(error) {
+                                  console.log("handleAuthResponse " + JSON.stringify(error))
+                                  pendingAuth = false
+                              })
+                         }
+
+                      }
+                    });
+
+      }
+
+    render() {
+      if (this.state.userData) {
+        signInText = "Signed in as " + this.state.userData.decentralizedID
+      } else {
+        signInText = "Not signed in"
+      }
+
+      return (
+        <View style={styles.container}>
+          <Text tyle={styles.welcome}>Blockstack React Native Example</Text>
+
+          <Button title="Sign In with Blockstack" onPress={() => this.signIn()}
+          disabled = {!this.state.loaded || this.state.userData != null}/>
+          <Text>{signInText}</Text>
+
+          <Button title="Sign out" onPress={() => this.signOut()}
+          disabled = {!this.state.loaded || this.state.userData == null}/>
+          <Text>------------</Text>
+
+          <Button title="Put file" onPress={() => this.putFile()}
+          disabled = {!this.state.loaded || this.state.userData == null}/>
+          <Text>{this.state.fileUrl}</Text>
+
+          <Button title="Get file" onPress={() => this.getFile()}
+          disabled = {!this.state.loaded || this.state.userData == null}/>
+          <Text>{this.state.fileContents}</Text>
+        </View>
+      );
+    }
+
+    async createSession() {
+       
+       config = {
+          appDomain:"https://flamboyant-darwin-d11c17.netlify.com",
+          scopes:["store_write"]
+        }
+        console.log("blockstack:" + RNBlockstackSdk)
+        hasSession = await RNBlockstackSdk.hasSession()
+        
+        alert(hasSession)
+
+        if (!hasSession["hasSession"]) {
+          result = await RNBlockstackSdk.createSession(config)
+          console.log("created " + result["loaded"])
+        } else {
+          console.log("reusing session")
+        }
+
+        alert(hasSession)
+        
+        if (this.props.authResponse) {
+          result = await RNBlockstackSdk.handleAuthResponse(this.props.authResponse)
+          console.log("userData " + JSON.stringify(result))
+          this.setState({userData:{decentralizedID:result["decentralizedID"]}, loaded:result["loaded"]})
+        } else {
+            var signedIn = await RNBlockstackSdk.isUserSignedIn()
+             if (signedIn["signedIn"]) {
+                console.log("user is signed in")
+                var userData = await RNBlockstackSdk.loadUserData()
+                console.log("userData " + JSON.stringify(userData))
+                this.setState({userData:{decentralizedID:userData["decentralizedID"]}, loaded:result["loaded"]})
+            } else {
+                this.setState({loaded:result["loaded"]})
+            }
+        }
+    }
+
+  async signIn() {
+    console.log("signIn")
+    console.log("current state: " + JSON.stringify(this.state))
+    result = await RNBlockstackSdk.signIn();
+
+    console.log("result: " + JSON.stringify(result))
+    this.setState({userData:{decentralizedID:result["decentralizedID"]}})
+  }
+
+  async signOut() {
+    result = await RNBlockstackSdk.signUserOut()
+
+    console.log(JSON.stringify(result))
+    if (result["signedOut"]) {
+      this.setState({userData: null})
     }
   }
 
-  componentWillMount() {
-    web3.eth.getBlock('latest')
-      .then(latestBlock => {
-        console.log(latestBlock);
-        this.setState({ latestBlock });
-      });
+  async putFile() {
+    this.setState({fileUrl: "uploading..."})
+    content = "Hello React Native"
+    options = {encrypt: false}
+    result = await RNBlockstackSdk.putFile(textFileName, content, options)
+    console.log(JSON.stringify(result))
+    this.setState({fileUrl: result["fileUrl"]})
   }
 
-  render() {
-    const latestBlockNumber = this.state.latestBlock.number;
-
-    return (
-      <View style={styles.container}>
-        <Text>Latest ethereum block is: {latestBlockNumber}</Text>
-        <Text>Check your console!</Text>
-        <Text>You should find extra info on the latest ethereum block.</Text>
-      </View>
-    );
+  async getFile() {
+    this.setState({fileContents: "downloading..."})
+    options = {decrypt:false}
+    result = await RNBlockstackSdk.getFile(textFileName, options)
+    console.log(JSON.stringify(result))
+    this.setState({fileContents: result["fileContents"]})
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'flex-start',
-    backgroundColor: '#fff',
     flex: 1,
     justifyContent: 'center',
-    margin: 20,
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+  },
+  instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
   },
 });
-
-
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
-// import React, { Component } from 'react';
-// import {
-//   Platform,
-//   StyleSheet,
-//   Text,
-//   View
-// } from 'react-native';
-// const Web3 = require('web3');
-// const web3 = new Web3();
-// web3.setProvider(new web3.providers.HttpProvider('https://ropsten.infura.io/rqmgop6P5BDFqz6yfGla'));
-
-// const instructions = Platform.select({
-//   ios: 'Press Cmd+R to reload,\n' +
-//     'Cmd+D or shake for dev menu',
-//   android: 'Double tap R on your keyboard to reload,\n' +
-//     'Shake or press menu button for dev menu',
-// });
-
-// type Props = {};
-// export default class App extends Component<Props> {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       balance: 0,
-//     }
-//   }
-
-//   componentDidMount(){
-//     web3.eth.getBalance('0x0000000000000000000000000000000000000000', (err, balance) => {
-//       console.log('balance ' + balance);
-//       this.setState({balance});
-//     });
-//   }
-
-//   render() {
-//     return (
-//       <View style={styles.container}>
-//         <Text style={styles.welcome}>
-//           Welcome to React Native Web3 Boiler Plate!
-//         </Text>
-//         <Text style={styles.welcome}>
-//           This -> ({this.state.balance/10e17} rETH) is a result of web3.eth.getBalance('0x0000000000000000000000000000000000000000')
-//         </Text>
-//         <Text style={styles.instructions}>
-//           I hope for this to be the start of a painless journey into cross platform Ethereum mobile development
-//         </Text>
-//         <Text style={styles.instructions}>
-//           {instructions}
-//         </Text>
-//       </View>
-//     );
-//   }
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     backgroundColor: '#F5FCFF',
-//   },
-//   welcome: {
-//     fontSize: 20,
-//     textAlign: 'center',
-//     margin: 10,
-//   },
-//   instructions: {
-//     textAlign: 'center',
-//     color: '#333333',
-//     marginBottom: 5,
-//   },
-// });

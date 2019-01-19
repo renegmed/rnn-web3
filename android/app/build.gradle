@@ -101,7 +101,7 @@ android {
         applicationId "com.rnw3boilerplate"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        missingDimensionStrategy "RNN.reactNativeVersion", "reactNative55"
+        missingDimensionStrategy "RNN.reactNativeVersion", "reactNative56"
         versionCode 1
         versionName "1.0"
         ndk {
@@ -150,6 +150,7 @@ configurations.all {
 }
 
 dependencies {
+    implementation project(':.._.._BlockstackSDK')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+" // From node_modules

@@ -1,3 +1,6 @@
 rootProject.name = 'RNW3Boilerplate'
 
 include ':app'
+
+include ':.._.._BlockstackSDK'
+project(':.._.._BlockstackSDK').projectDir = new File('../../blockstack-react-native/BlockstackSDK/android')
