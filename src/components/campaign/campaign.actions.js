@@ -59,3 +59,19 @@ export function action$fetchRequests() {
         payload: mockRequests
     };
 }
+
+export function action$addCampaign(data) {
+    return {
+        type: 'ADD_CAMPAIGN',
+        payload: data
+    };
+}
+export function action$addContribution(id, _amount) {  
+    const amount = Number(_amount)
+    return {
+        type: 'ADD_CONTRIBUTION',
+        payload: { id, amount  }
+    };
+}
+
+
