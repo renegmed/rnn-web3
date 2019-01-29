@@ -9,11 +9,12 @@ export function registerScreens() {
     'MainPage', () => require('./Main').default, Provider, store);
        
   Navigation.registerComponentWithRedux(
-    'campaign.addCampaign', () => require('./screens/campaign/NewCampaign').default, Provider, store);
-  
-    // Navigation.registerComponent(
-    //   'campaign.Contribution', () => require('./screens/campaign/Contribute').default);    
+    'campaign.addCampaign', () => require('./screens/campaign/NewCampaign').default, Provider, store); 
+    
+  Navigation.registerComponentWithRedux(
+    'campaign.Contribute', () => require('./screens/campaign/Contribute').default, Provider, store);  
 
   Navigation.registerComponentWithRedux(
-    'campaign.Contribution', () => require('./components/campaign/Contribute').default, Provider, store);    
+      'campaign.Campaign', () => require('./components/campaign/Campaign').default, Provider, store);   
+       
 }

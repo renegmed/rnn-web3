@@ -11,6 +11,11 @@ export default function (state = initialState, action) {
           ...state,
           campaigns: state.campaigns.concat(action.payload) 
       }
+      case 'SELECT_CAMPAIGN':
+        return {
+          ...state,         
+          selectedCampaign: action.payload
+        }  
       case 'ADD_CAMPAIGN':
         return {         
             ...state,

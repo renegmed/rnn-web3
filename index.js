@@ -18,7 +18,7 @@ Navigation.events().registerAppLaunchedListener(() => {
         options: {
           topBar: {
             title: {
-              text: 'Welcome To Kickstart'
+              text: 'Kickstart Campaign List'
             }
           }
         }

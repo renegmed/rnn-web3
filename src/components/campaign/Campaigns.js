@@ -1,38 +1,86 @@
 import React, {PureComponent} from 'react';
-import {View, ScrollView, Text, TouchableOpacity } from 'react-native';
+import {View, ScrollView, Text, TouchableOpacity, Button, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { Navigation } from 'react-native-navigation';
 
-import { action$fetchCampaigns } from './campaign.actions';
-import { list, layout } from '../../appStyles';
+import { action$fetchCampaigns, action$selectCampaign } from './campaign.actions';
+import { list, field } from '../../appStyles';
  
 
 class Campaigns extends PureComponent {  
-    componentDidMount() {
-       
+   
+    componentDidMount() { 
+       //this.navigationEventListener = Navigation.events().bindComponent(this); // needed for navigationButtonPressed
        this.props.action$fetchCampaigns();
     }
    
-    onContribute = (item) => { 
+    componentWillUnmount() { 
+        if (this.navigationEventListener) {
+          this.navigationEventListener.remove();
+        } 
+    }
+    
+    // navigationButtonPressed({ buttonId }) { 
+    //     switch(buttonId) {
+    //         case 'sideDrawerToggle':             
+    //             Navigation.mergeOptions(this.props.componentId, {
+    //                 sideMenu: {
+    //                     left: {
+    //                         visible: true
+    //                     }
+    //                 }
+    //             });
+    //             break;
+    //         default:
+    //             break;     
+    //     } 
+    // }
+
+    onCampaign = (item) => {  
+    
+        this.props.action$selectCampaign(item);
         Navigation.showModal({
             stack: {
               children: [{
                 component: {
-                  name: 'campaign.Contribution',
-                  passProps: {
-                    campaign: item
-                  }
+                    name: 'campaign.Campaign',
+                    passProps: {
+                      campaign: item
+                    }, 
+                    options: {
+                      topBar: {
+                        title: {
+                          text: 'Campaign Requests'
+                        }
+                      }
+                    }
                 } 
               }]
             }
         });
+        
+        
     }
-
+ 
     renderItem = (item) => {
         return (
-            <Text style = {list.item}>
-                {item.id}
-            </Text>
+            <View style={styles.itemContainer}>
+                <Text style = {field.label}>Address:</Text>
+                <Text style = {field.item}>{item.id}</Text>
+                <Text style = {field.label}>Campaign description:</Text>
+                <Text style = {field.item}>{item.description}</Text>
+                <Text style = {field.label}>Target amount:</Text>
+                <Text style = {field.item}>{item.target}</Text>
+                <Text style = {field.label}>Minimum contribution:</Text>
+                <Text style = {field.item}>{item.minimum}</Text>
+                <Text style = {field.label}>No. of current contributors:</Text>
+                <Text style = {field.item}>{item.contributors}</Text>
+                <Text style = {field.label}>Total contributions:</Text>
+                <Text style = {field.item}>{item.amount}</Text>
+                <TouchableOpacity style={styles.button}>
+                    <Button title='Contribute Now' onPress={ () => this.onContribute(item) } /> 
+                </TouchableOpacity> 
+            </View> 
         ) 
     }
 
@@ -43,7 +91,7 @@ class Campaigns extends PureComponent {
                     this.props.campaigns.map((item, index) => (
                        <TouchableOpacity
                           key = {item.id}  
-                          onPress = {() => this.onContribute(item)}>
+                          onPress = {() => this.onCampaign(item)}>
                           {this.renderItem(item)}
                        </TouchableOpacity>
                     ))
@@ -51,12 +99,50 @@ class Campaigns extends PureComponent {
            </ScrollView>
         ) 
     }
-}
 
-function mapStateToProps(state) {
-    return {
-        campaigns: state.campaign.campaigns
+    onContribute = (item) => { 
+        this.props.action$selectCampaign(item); 
+        Navigation.showModal({
+            stack: {
+              children: [{
+                component: {
+                    name: 'campaign.Contribute', 
+                    options: {
+                      topBar: {
+                        title: {
+                          text: 'Contribute To Campaign'
+                        }
+                      }
+                    }
+                } 
+              }]
+            }
+        });
     }
 }
 
-export default connect(mapStateToProps, { action$fetchCampaigns }) (Campaigns);
+
+const styles = StyleSheet.create({  
+    itemContainer: {
+        borderWidth: 1,
+        borderColor: "black",
+        backgroundColor: "#eee",
+        width: "100%",
+        height: 360,
+        marginTop: 6,
+        marginBottom: 6
+    },
+    button: {
+        width: "40%", 
+        alignItems: "center",
+        margin: 10
+    } 
+  })
+
+function mapStateToProps(state) {
+    return {
+        campaigns: state.campaign.campaigns 
+    }
+}
+
+export default connect(mapStateToProps, { action$fetchCampaigns, action$selectCampaign }) (Campaigns);

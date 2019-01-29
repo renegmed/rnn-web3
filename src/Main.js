@@ -9,7 +9,7 @@ export default class Main extends PureComponent {
         rightButtons: [
           {
             id: 'addCampaign',
-            text: 'Add'
+            text: 'Add Campaign'
           }
         ]
       }

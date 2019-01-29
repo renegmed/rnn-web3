@@ -28,7 +28,7 @@ export const list = StyleSheet.create({
     },
     item: {
         margin: 6,
-        fontSize: 20
+        fontSize: 18
     }
 });
 
@@ -36,10 +36,18 @@ export const field = StyleSheet.create({
     text: {
         fontSize: 22,
         marginBottom: 10  
-    },
+    }, 
+    item: {
+        fontSize: 18,
+        paddingLeft: 4,
+        paddingBottom: 3,
+        color: "black"
+    }, 
     label: {
-        fontSize: 16,
-        paddingLeft: 4
+        fontSize: 14,
+        paddingTop: 3,
+        paddingLeft: 4,
+        color: "black"
     }, 
     button: {
         fontSize: 16,

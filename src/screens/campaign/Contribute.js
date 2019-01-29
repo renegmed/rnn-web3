@@ -3,17 +3,26 @@ import {View, Text, TextInput, Button } from 'react-native';
 import { Navigation } from 'react-native-navigation';
 import { connect } from 'react-redux';
 
-import { action$addContribution } from './campaign.actions';
+import { action$addContribution } from '../../components/campaign/campaign.actions';
 import { input } from '../../appStyles';
 
 class Contribute extends PureComponent {  
 
     state = {
-      contribution: 0
+      contribution: "" 
     } 
 
+    // componentWillUnmount() {
+    //   try{
+    //     Navigation.dismissModal(this.props.componentId);
+    //   } catch (err) {
+    //     console.log(err);
+    //   }
+     
+    // }
+
     render() { 
-      const { campaign } = this.props;  
+      const campaign = this.props.selectedCampaign;  
       return (      
         <View >  
           <Text>{campaign.id}</Text>
@@ -30,7 +39,7 @@ class Contribute extends PureComponent {
             onChangeText={ (text) => this.contributionChangedHandler(text)}
             style={input.field}
           />
-          <Button title='Contribute Now' onPress={ this.onConbribute } />
+          <Button title='Contribute Now' onPress={ this.onContribute } />
           <Button title='Cancel' onPress={this.onCancel} />
         </View>
       );
@@ -40,8 +49,12 @@ class Contribute extends PureComponent {
       this.setState({ contribution: val })
     }
 
-    onConbribute = () => { 
-        this.props.action$addContribution(this.props.campaign.id, this.state.contribution)
+    onContribute = async () => { 
+        try {
+            await this.props.action$addContribution(this.props.selectedCampaign.id, Number(this.state.contribution))
+        } catch (err) {
+            console.log(err)
+        }      
         Navigation.dismissModal(this.props.componentId);
     }
 
@@ -50,4 +63,9 @@ class Contribute extends PureComponent {
     }
 }
 
-export default connect(null, { action$addContribution } ) (Contribute)
+function mapStateToProps(state) {
+  return {
+      selectedCampaign: state.campaign.selectedCampaign 
+  }
+}
+export default connect(mapStateToProps, { action$addContribution } ) (Contribute)
