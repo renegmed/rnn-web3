@@ -1,16 +1,27 @@
 
 const initialState = {
   campaigns: [],
-  selectedCampaign: null
+  selectedCampaign: null,
+  failed: false,
+  errorType: "",
 }
 
 export default function (state = initialState, action) {
     switch (action.type) {
       case 'FETCH_CAMPAIGNS':
+        console.log("===== campaign.reducer FETCH_CAMPAIGNS");
+        console.log(typeof action.payload);
+        console.log(action.payload) 
         return {         
           ...state,
           campaigns: state.campaigns.concat(action.payload) 
       }
+      case 'FETCH_FAILURE':
+        return {
+          ...state,
+          failed: action.isFetchFailed,
+          errorType: action.errorType
+        }
       case 'SELECT_CAMPAIGN':
         return {
           ...state,         

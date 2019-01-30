@@ -11,7 +11,7 @@ class Campaigns extends PureComponent {
    
     componentDidMount() { 
        //this.navigationEventListener = Navigation.events().bindComponent(this); // needed for navigationButtonPressed
-       this.props.action$fetchCampaigns();
+       this.props.fetchCampaigns();
     }
    
     componentWillUnmount() { 
@@ -38,7 +38,7 @@ class Campaigns extends PureComponent {
 
     onCampaign = (item) => {  
     
-        this.props.action$selectCampaign(item);
+        this.props.selectCampaign(item);
         Navigation.showModal({
             stack: {
               children: [{
@@ -63,6 +63,8 @@ class Campaigns extends PureComponent {
     }
  
     renderItem = (item) => {
+       
+        //console.log(item);
         return (
             <View style={styles.itemContainer}>
                 <Text style = {field.label}>Address:</Text>
@@ -85,6 +87,8 @@ class Campaigns extends PureComponent {
     }
 
     render() {
+        console.log("---- campaigns.js render() ----")
+        console.log(this.props.campaigns)
         return (
             <ScrollView style={list.container}> 
                 {
@@ -101,7 +105,7 @@ class Campaigns extends PureComponent {
     }
 
     onContribute = (item) => { 
-        this.props.action$selectCampaign(item); 
+        this.props.selectCampaign(item); 
         Navigation.showModal({
             stack: {
               children: [{
@@ -139,10 +143,17 @@ const styles = StyleSheet.create({
     } 
   })
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
     return {
         campaigns: state.campaign.campaigns 
     }
 }
 
-export default connect(mapStateToProps, { action$fetchCampaigns, action$selectCampaign }) (Campaigns);
+const mapDistpatchToProps = dispatch => {
+    return {
+        fetchCampaigns: () => dispatch(action$fetchCampaigns()),
+        selectCampaign: (item) => dispatch(action$selectCampaign(item))
+    }
+}
+
+export default connect(mapStateToProps, mapDistpatchToProps ) (Campaigns);
