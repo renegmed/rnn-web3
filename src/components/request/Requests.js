@@ -3,8 +3,7 @@ import {View, ScrollView, Text, Button, TouchableHighlight, StyleSheet } from 'r
 import { connect } from 'react-redux';
 import { Navigation } from 'react-native-navigation';
 
-import { action$fetchRequests} from './request.actions';
-import {  action$addContribution  } from '../campaign/campaign.actions';
+import { action$fetchRequests} from './request.actions'; 
 import {  field } from '../../appStyles';
  
 
@@ -12,7 +11,7 @@ class Requests extends PureComponent {
     
     componentDidMount() {  
         const { selectedCampaign } = this.props;        
-        this.props.action$fetchRequests(selectedCampaign.id)
+        this.props.fetchRequests(selectedCampaign.id)
     }  
  
     onUpdateRequest = (item) => { 
@@ -47,6 +46,9 @@ class Requests extends PureComponent {
     }
 
     render() {  
+        console.log("---- Requests render() ----");
+        console.log(this.props.requests);
+
         return (
             <View> 
                 {
@@ -88,4 +90,9 @@ function mapStateToProps(state) {
     }
 }
 
- export default connect(mapStateToProps, { action$fetchRequests, action$addContribution }) (Requests);
+const mapDistpatchToProps = dispatch => {
+    return {
+        fetchRequests: (campaignAddress) => dispatch(action$fetchRequests(campaignAddress)), 
+    }
+}
+export default connect(mapStateToProps, mapDistpatchToProps) (Requests);

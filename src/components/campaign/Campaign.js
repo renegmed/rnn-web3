@@ -26,22 +26,22 @@ class Campaign extends Component {
   }
   
   render() { 
-    const  selectedCampaign  = this.props.selectedCampaign;        
+    const  campaign  = this.props.selectedCampaign;        
     return (      
       <ScrollView >  
         <View style={styles.itemContainer} >
           <Text style = {field.label}>Address:</Text>
-          <Text style = {field.item}>{selectedCampaign.id}</Text>
-          <Text style = {field.label}>Campaign description:</Text>
-          <Text style = {field.item}>{selectedCampaign.description}</Text>
+          <Text style = {field.item}>{campaign.id}</Text> 
           <Text style = {field.label}>Target amount:</Text>
-          <Text style = {field.item}>{selectedCampaign.target}</Text>
+          <Text style = {field.item}>{campaign.amount}</Text>
           <Text style = {field.label}>Minimum contribution:</Text>
-          <Text style = {field.item}>{selectedCampaign.minimum}</Text>
+          <Text style = {field.item}>{campaign.minimum}</Text>
+          <Text style = {field.label}>No. of requests:</Text>
+          <Text style = {field.item}>{campaign.requestsCount}</Text>
           <Text style = {field.label}>No. of current contributors:</Text>
-          <Text style = {field.item}>{selectedCampaign.contributors}</Text>
-          <Text style = {field.label}>Total contributions:</Text>
-          <Text style = {field.item}>{selectedCampaign.amount}</Text> 
+          <Text style = {field.item}>{campaign.contributors}</Text>
+          <Text style = {field.label}>Manager:</Text>
+          <Text style = {field.item}>{campaign.manager}</Text> 
         </View>
        
         <Requests />  

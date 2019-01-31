@@ -1,6 +1,8 @@
 const initialState = {
     requests: [],
-    campaign: null
+    campaign: null,
+    failed: false,
+    errorType: "",
   }
   
   export default function (state = initialState, action) {
@@ -10,6 +12,12 @@ const initialState = {
             ...state,        
             requests: action.requests 
           } 
+        case 'FETCH_REQUESTS_FAILURE':
+          return {
+            ...state,
+            failed: action.isFetchFailed,
+            errorType: action.errorType
+          }  
         default:
           return state;
       }

@@ -8,10 +8,7 @@ const initialState = {
 
 export default function (state = initialState, action) {
     switch (action.type) {
-      case 'FETCH_CAMPAIGNS':
-        console.log("===== campaign.reducer FETCH_CAMPAIGNS");
-        console.log(typeof action.payload);
-        console.log(action.payload) 
+      case 'FETCH_CAMPAIGNS': 
         return {         
           ...state,
           campaigns: state.campaigns.concat(action.payload) 
