@@ -60,30 +60,37 @@ export const action$fetchCampaigns = () => async dispatch =>{
         return dispatch(fetchFailed('ACCESS_TO_CAMPAIGNS_FAILED'));
     } 
 
-    let campaigns = [];  
+    let campaigns = [campaignAddresses.length];  
+   
+    for (let i =0; i < campaignAddresses.length; i++) {
+        let campaign = await new web3.eth.Contract(JSON.parse(Campaign.interface), campaignAddresses[i]);
+        let summary = await campaign.methods.getSummary().call(); 
+        campaigns[i] = {
+            id: campaignAddresses[i],
+            minimum: summary[0],
+            amount: summary[1],
+            requestsCount: summary[2],
+            contributors: summary[3],
+            manager: summary[4]
+        }; 
+    }
+    // await campaignAddresses.map(async address => { 
 
-    await campaignAddresses.map(async address => { 
-
-        let campaign = await new web3.eth.Contract(JSON.parse(Campaign.interface), address);
+    //     let campaign = await new web3.eth.Contract(JSON.parse(Campaign.interface), address);
         
-        if (typeof campaign !== 'undefined') {
+    //     if (typeof campaign !== 'undefined') {
             
-            let summary = await campaign.methods.getSummary().call(); 
-            await campaigns.push({
-                id: address,
-                minimum: summary[0],
-                amount: summary[1],
-                requestsCount: summary[2],
-                contributors: summary[3],
-                manager: summary[4]
-            }); 
-        } 
-    }); 
-    console.log("--- campaign.actions fetchCampaigns ----");
-    console.log(campaigns)
-    campaigns.map( c => {
-        console.log(c.id)
-    })
+    //         let summary = await campaign.methods.getSummary().call(); 
+    //         campaigns[i++] = {
+    //             id: address,
+    //             minimum: summary[0],
+    //             amount: summary[1],
+    //             requestsCount: summary[2],
+    //             contributors: summary[3],
+    //             manager: summary[4]
+    //         }; 
+    //     } 
+    // });  
  
     dispatch(getCampaigns(campaigns)) 
    

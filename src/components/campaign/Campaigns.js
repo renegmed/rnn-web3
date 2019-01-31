@@ -61,24 +61,22 @@ class Campaigns extends PureComponent {
         
         
     }
- 
-    renderItem = (item) => {
-       
-        //console.log(item);
+  
+    renderItem = (item) => { 
         return (
             <View style={styles.itemContainer}>
                 <Text style = {field.label}>Address:</Text>
-                <Text style = {field.item}>{item.id}</Text>
-                <Text style = {field.label}>Campaign description:</Text>
-                <Text style = {field.item}>{item.description}</Text>
+                <Text style = {field.item}>{item.id}</Text> 
                 <Text style = {field.label}>Target amount:</Text>
-                <Text style = {field.item}>{item.target}</Text>
+                <Text style = {field.item}>{item.amount}</Text>
                 <Text style = {field.label}>Minimum contribution:</Text>
                 <Text style = {field.item}>{item.minimum}</Text>
+                <Text style = {field.label}>No. of requests:</Text>
+                <Text style = {field.item}>{item.requestsCount}</Text>
                 <Text style = {field.label}>No. of current contributors:</Text>
                 <Text style = {field.item}>{item.contributors}</Text>
-                <Text style = {field.label}>Total contributions:</Text>
-                <Text style = {field.item}>{item.amount}</Text>
+                <Text style = {field.label}>Manager:</Text>
+                <Text style = {field.item}>{item.manager}</Text> 
                 <TouchableOpacity style={styles.button}>
                     <Button title='Contribute Now' onPress={ () => this.onContribute(item) } /> 
                 </TouchableOpacity> 
@@ -86,17 +84,16 @@ class Campaigns extends PureComponent {
         ) 
     }
 
-    render() {
-        console.log("---- campaigns.js render() ----")
-        console.log(this.props.campaigns)
+    render() { 
+        const { campaigns } = this.props; 
         return (
             <ScrollView style={list.container}> 
                 {
-                    this.props.campaigns.map((item, index) => (
+                    campaigns.map((item, index) => (
                        <TouchableOpacity
                           key = {item.id}  
                           onPress = {() => this.onCampaign(item)}>
-                          {this.renderItem(item)}
+                           {this.renderItem(item)}
                        </TouchableOpacity>
                     ))
                 }  
@@ -128,11 +125,11 @@ class Campaigns extends PureComponent {
 
 const styles = StyleSheet.create({  
     itemContainer: {
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: "black",
         backgroundColor: "#eee",
-        width: "100%",
-        height: 360,
+        width: "95%",
+        height: 400,
         marginTop: 6,
         marginBottom: 6
     },
