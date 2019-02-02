@@ -1,6 +1,7 @@
 const initialState = {
+    campaignAddress: '',
     requests: [],
-    campaign: null,
+    approversCount: 0, 
     failed: false,
     errorType: "",
   }
@@ -8,9 +9,10 @@ const initialState = {
   export default function (state = initialState, action) {
       switch (action.type) {
         case 'FETCH_REQUESTS':
-          return { 
-            ...state,        
-            requests: action.requests 
+          return {  
+              requests: action.requests,
+              campaignAddress: action.campaignAddress,
+              approversCount: action.approversCount 
           } 
         case 'FETCH_REQUESTS_FAILURE':
           return {

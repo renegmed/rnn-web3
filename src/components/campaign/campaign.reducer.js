@@ -9,10 +9,13 @@ const initialState = {
 export default function (state = initialState, action) {
     switch (action.type) {
       case 'FETCH_CAMPAIGNS': 
-        return {         
-          ...state,
-          campaigns: state.campaigns.concat(action.payload) 
-      }
+        return {    
+          campaigns:  action.payload  
+        }
+        // return {         
+        //   ...state,
+        //   campaigns: state.campaigns.concat(action.payload) 
+        // }
       case 'FETCH_FAILURE':
         return {
           ...state,

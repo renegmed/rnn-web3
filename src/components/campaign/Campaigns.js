@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
         borderColor: "black",
         backgroundColor: "#eee",
         width: "95%",
-        height: 400,
+        height: 410,
         marginTop: 6,
         marginBottom: 6
     },

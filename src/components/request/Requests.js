@@ -10,29 +10,27 @@ import {  field } from '../../appStyles';
 class Requests extends PureComponent {  
     
     componentDidMount() {  
-        const { selectedCampaign } = this.props;        
+        const { selectedCampaign } = this.props;    
         this.props.fetchRequests(selectedCampaign.id)
     }  
  
     onUpdateRequest = (item) => { 
         alert("Update Request: " + item.description) 
     }
-     
-    renderItem = (item) => {        
+       
+    renderItem = (item) => {  
         return (
-            <ScrollView style={styles.itemContainer}>
-                <Text style = {field.label}>Address:</Text>
-                <Text style = {field.item}>{item.id}</Text>
+            <ScrollView style={styles.itemContainer}> 
                 <Text style = {field.label}>Description:</Text>
                 <Text style = {field.item}>{item.description}</Text>
                 <Text style = {field.label}>Amount requested:</Text>
-                <Text style = {field.item}>{item.amount}</Text>
+                <Text style = {field.item}>{item.value}</Text>
                 <Text style = {field.label}>Recipient:</Text>
                 <Text style = {field.item}>{item.recipient}</Text>
-                <Text style = {field.label}>Approved:</Text>
-                <Text style = {field.item}>{item.approved}</Text>
-                <Text style = {field.label}>Finalized:</Text>
-                <Text style = {field.item}>{item.finalized}</Text>
+                <Text style = {field.label}>ApprovalCount:</Text>
+                <Text style = {field.item}>{item.approvalCount}</Text>
+                <Text style = {field.label}>Completed:</Text>
+                <Text style = {field.item}>{item.complete}</Text>
                
                 <TouchableHighlight style={styles.button}>
                     <Button title='Approve' onPress={ () => alert('Approve Request by Owner') } /> 
@@ -45,20 +43,19 @@ class Requests extends PureComponent {
         ) 
     }
 
-    render() {  
-        console.log("---- Requests render() ----");
-        console.log(this.props.requests);
-
+    render() {   
+        const { requests } = this.props;  
         return (
             <View> 
                 {
-                    this.props.requests.map((item, index) => (
-                       <TouchableHighlight
-                          key = {item.id}  
-                          >
+                    requests === 'undefined' || requests.length == 0 ? null :
+                        requests.map((item, index) => (
+                        <TouchableHighlight
+                            key = {index}  
+                        >
                           {this.renderItem(item)}
-                       </TouchableHighlight>
-                    ))
+                        </TouchableHighlight>
+                        )) 
                 }  
            </View>
         ) 
